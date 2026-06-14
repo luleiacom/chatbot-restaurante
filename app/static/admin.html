@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Chatbot</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+    header {
+      background: #1a1a1a;
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { font-size: 18px; font-weight: 700; }
+    header span { font-size: 13px; opacity: 0.5; }
+
+    .container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      height: calc(100vh - 64px);
+    }
+
+    /* Lista de sesiones */
+    .sessions-panel {
+      background: white;
+      border-right: 1px solid #e5e5e5;
+      overflow-y: auto;
+    }
+    .sessions-panel h2 {
+      padding: 20px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #999;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .session-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f5f5f5;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .session-item:hover { background: #f9f9f9; }
+    .session-item.active { background: #f0f0f0; }
+    .session-item .session-id {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .session-item .session-meta {
+      font-size: 11px;
+      color: #aaa;
+    }
+    .session-item .badge {
+      display: inline-block;
+      background: #1a1a1a;
+      color: white;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-left: 6px;
+    }
+
+    /* Panel de conversación */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      background: #f9f9f9;
+    }
+    .chat-panel-header {
+      padding: 20px 28px;
+      background: white;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 13px;
+      color: #999;
+    }
+    .chat-panel-header strong { color: #1a1a1a; }
+
+    .messages-view {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bbb;
+      font-size: 14px;
+    }
+
+    .msg {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .msg.user {
+      background: #1a1a1a;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.assistant {
+      background: white;
+      border: 1px solid #e5e5e5;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .msg .msg-time {
+      font-size: 10px;
+      opacity: 0.5;
+      margin-top: 4px;
+    }
+
+    .loading { color: #bbb; font-size: 13px; padding: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>NODO · Panel Admin</h1>
+  <span>Conversaciones del chatbot</span>
+</header>
+
+<div class="container">
+  <div class="sessions-panel">
+    <h2>Sesiones</h2>
+    <div id="sessions-list"><p class="loading">Cargando...</p></div>
+  </div>
+
+  <div class="chat-panel">
+    <div class="chat-panel-header" id="chat-header">
+      Seleccioná una sesión para ver la conversación
+    </div>
+    <div id="messages-view" class="messages-view">
+      <div class="empty-state">👈 Elegí una sesión</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = "http://localhost:8000";
+  let activeSession = null;
+
+  // Cargar lista de sesiones
+  async function loadSessions() {
+    const res = await fetch(`${API}/admin/sessions`);
+    const sessions = await res.json();
+    const container = document.getElementById("sessions-list");
+
+    if (sessions.length === 0) {
+      container.innerHTML = '<p class="loading">Sin conversaciones aún.</p>';
+      return;
+    }
+
+    container.innerHTML = sessions.map(s => `
+      <div class="session-item ${s.session_id === activeSession ? 'active' : ''}"
+           onclick="loadConversation('${s.session_id}', this)">
+        <div class="session-id">
+          ${s.session_id.substring(0, 18)}...
+          <span class="badge">${s.message_count}</span>
+        </div>
+        <div class="session-meta">
+          Última actividad: ${formatDate(s.last_active)}
+        </div>
+      </div>
+    `).join("");
+  }
+
+  // Cargar conversación de una sesión
+  async function loadConversation(sessionId, el) {
+    // Marcar activo
+    document.querySelectorAll(".session-item").forEach(i => i.classList.remove("active"));
+    el.classList.add("active");
+    activeSession = sessionId;
+
+    document.getElementById("chat-header").innerHTML =
+      `Sesión: <strong>${sessionId}</strong>`;
+
+    const view = document.getElementById("messages-view");
+    view.innerHTML = '<p class="loading">Cargando mensajes...</p>';
+
+    const res = await fetch(`${API}/admin/sessions/${sessionId}`);
+    const data = await res.json();
+
+    if (data.messages.length === 0) {
+      view.innerHTML = '<div class="empty-state">Sin mensajes.</div>';
+      return;
+    }
+
+    view.innerHTML = data.messages.map(m => `
+      <div class="msg ${m.role}">
+        ${m.content}
+      </div>
+    `).join("");
+
+    view.scrollTop = view.scrollHeight;
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-AR', {
+      day: '2-digit', month: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  // Agregar ruta en main.py para servir admin
+  loadSessions();
+  setInterval(loadSessions, 10000); // Refrescar cada 10 segundos
+</script>
+</body>
+</html>

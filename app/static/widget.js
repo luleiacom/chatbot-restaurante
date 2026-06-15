@@ -1,5 +1,6 @@
 (function () {
-  const CHATBOT_URL = "http://localhost:8000";
+  // URL vacía para que use el dominio actual
+  const CHATBOT_URL = ""; 
   let sessionId = null;
   let isOpen = false;
 
@@ -63,7 +64,6 @@
       transform: translateY(0);
     }
 
-    /* Mobile: ocupa casi toda la pantalla */
     @media (max-width: 480px) {
       #chatbot-window {
         bottom: 0;

@@ -1,6 +1,6 @@
 (function () {
   // Al dejar la URL vacía, el navegador usará el mismo dominio donde está la web
-  const CHATBOT_URL = ""; 
+  const CHATBOT_URL = "https://glistening-reprieve-production.up.railway.app"; 
   let sessionId = null;
   let isOpen = false;
 

@@ -1,9 +1,13 @@
 (function () {
+    // 1. Crear un contenedor "host"
     const host = document.createElement('div');
     document.body.appendChild(host);
+    // 2. Activar Shadow DOM (esto aísla el diseño)
     const shadow = host.attachShadow({ mode: 'open' });
 
-    const styles = `
+    // 3. Definir estilos DENTRO del Shadow DOM
+    const style = document.createElement('style');
+    style.textContent = `
         :host { all: initial; font-family: 'Segoe UI', sans-serif; }
         .wrapper { position: fixed; bottom: 20px; right: 20px; z-index: 999999; }
         #toggle { width: 50px; height: 50px; border-radius: 50%; background: #1a1a1a; color: white; border: none; cursor: pointer; }
@@ -18,13 +22,11 @@
         input { flex: 1; border: 1px solid #e5e5e5; padding: 6px 10px; border-radius: 4px; outline: none; }
         button#send { background: #1a1a1a; color: white; border: none; padding: 0 12px; border-radius: 4px; cursor: pointer; }
     `;
+    shadow.appendChild(style);
 
-    const styleEl = document.createElement("style");
-    styleEl.textContent = styles;
-    shadow.appendChild(styleEl);
-
-    const container = document.createElement("div");
-    container.className = "wrapper";
+    // 4. Crear la estructura HTML del chat
+    const container = document.createElement('div');
+    container.className = 'wrapper';
     container.innerHTML = `
         <button id="toggle">💬</button>
         <div id="window">
@@ -38,6 +40,7 @@
     `;
     shadow.appendChild(container);
 
+    // 5. Lógica de conexión
     const win = shadow.getElementById("window");
     const msgs = shadow.getElementById("messages");
     const input = shadow.getElementById("input");

@@ -1,56 +1,64 @@
 (function () {
-    const host = document.createElement('div');
-    document.body.appendChild(host);
-    const shadow = host.attachShadow({ mode: 'open' });
+    // RUTA RELATIVA: Esto soluciona el "Error al conectar"
+    const API_ENDPOINT = "/chat"; 
 
+    // Crear un contenedor único para evitar conflictos de estilos
+    const host = document.createElement('div');
+    host.id = 'nodo-chatbot-container';
+    document.body.appendChild(host);
+
+    // Inyectar estilos aislados
     const style = document.createElement('style');
     style.textContent = `
-        .wrapper { position: fixed; bottom: 20px; right: 20px; z-index: 2147483647; font-family: 'DM Sans', sans-serif; }
-        #toggle { width: 56px; height: 56px; border-radius: 50%; background: #111110; color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-size: 24px; }
-        #window { display: none; position: absolute; bottom: 70px; right: 0; width: 320px; height: 450px; background: #fafaf8; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; border: 1px solid #e8e8e4; }
-        #window.open { display: flex; }
-        header { background: #111110; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        #messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px 14px; border-radius: 12px; font-size: 14px; max-width: 80%; line-height: 1.4; }
-        .bot { background: white; border: 1px solid #e8e8e4; align-self: flex-start; }
-        .user { background: #111110; color: white; align-self: flex-end; }
-        #input-area { padding: 12px; display: flex; gap: 8px; border-top: 1px solid #e8e8e4; background: white; }
-        input { flex: 1; padding: 10px; border: 1px solid #e8e8e4; border-radius: 20px; outline: none; font-size: 14px; }
-        #send { background: #111110; color: white; border: none; border-radius: 20px; padding: 0 16px; cursor: pointer; font-weight: bold; }
+        #nodo-chatbot-container { position: fixed; bottom: 20px; right: 20px; z-index: 999999; font-family: sans-serif; }
+        #nodo-toggle { width: 55px; height: 55px; border-radius: 50%; background: #111110; color: white; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        #nodo-window { display: none; position: absolute; bottom: 70px; right: 0; width: 320px; height: 400px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
+        #nodo-window.open { display: flex; }
+        #nodo-header { background: #111110; color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+        #nodo-messages { flex: 1; padding: 12px; overflow-y: auto; font-size: 14px; display: flex; flex-direction: column; gap: 8px; }
+        .nodo-msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; }
+        .nodo-bot { background: #eee; align-self: flex-start; }
+        .nodo-user { background: #111110; color: white; align-self: flex-end; }
+        #nodo-input-area { padding: 10px; display: flex; gap: 5px; border-top: 1px solid #eee; }
+        #nodo-input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; outline: none; }
+        #nodo-send { background: #111110; color: white; border: none; padding: 0 15px; cursor: pointer; border-radius: 4px; }
     `;
-    shadow.appendChild(style);
+    document.head.appendChild(style);
 
-    const container = document.createElement('div');
-    container.className = 'wrapper';
-    container.innerHTML = `
-        <button id="toggle">💬</button>
-        <div id="window">
-            <header><span>Asistente</span><button id="close" style="background:none; border:none; color:white; cursor:pointer;">✕</button></header>
-            <div id="messages"><div class="msg bot">¡Hola! ¿En qué te ayudo?</div></div>
-            <div id="input-area"><input id="text" placeholder="Escribí aquí..."><button id="send">➤</button></div>
+    // Crear estructura
+    host.innerHTML = `
+        <button id="nodo-toggle">💬</button>
+        <div id="nodo-window">
+            <div id="nodo-header"><span>Asistente</span><button id="nodo-close" style="background:none; border:none; color:white; cursor:pointer;">✕</button></div>
+            <div id="nodo-messages"></div>
+            <div id="nodo-input-area"><input id="nodo-input" placeholder="Escribí aquí..."><button id="nodo-send">➤</button></div>
         </div>
     `;
-    shadow.appendChild(container);
 
-    const win = shadow.getElementById('window');
-    shadow.getElementById('toggle').onclick = () => win.classList.toggle('open');
-    shadow.getElementById('close').onclick = () => win.classList.remove('open');
+    // Lógica
+    const win = document.getElementById('nodo-window');
+    document.getElementById('nodo-toggle').onclick = () => win.classList.toggle('open');
+    document.getElementById('nodo-close').onclick = () => win.classList.remove('open');
 
-    const msgs = shadow.getElementById('messages');
-    const input = shadow.getElementById('text');
-    
-    async function send() {
-        const txt = input.value;
-        if(!txt) return;
+    const input = document.getElementById('nodo-input');
+    const msgs = document.getElementById('nodo-messages');
+
+    document.getElementById('nodo-send').onclick = async () => {
+        const text = input.value;
+        if (!text) return;
+        msgs.innerHTML += `<div class="nodo-msg nodo-user">${text}</div>`;
         input.value = "";
-        msgs.innerHTML += `<div class="msg user">${txt}</div>`;
         try {
-            const res = await fetch('/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({message: txt}) });
+            const res = await fetch(API_ENDPOINT, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({message: text}) 
+            });
             const data = await res.json();
-            msgs.innerHTML += `<div class="msg bot">${data.response}</div>`;
+            msgs.innerHTML += `<div class="nodo-msg nodo-bot">${data.response}</div>`;
             msgs.scrollTop = msgs.scrollHeight;
-        } catch(e) { msgs.innerHTML += `<div class="msg bot">Error de conexión.</div>`; }
-    }
-    shadow.getElementById('send').onclick = send;
-    input.onkeypress = (e) => { if(e.key === 'Enter') send(); };
+        } catch(e) { 
+            msgs.innerHTML += `<div class="nodo-msg nodo-bot">Error: No se pudo conectar.</div>`; 
+        }
+    };
 })();

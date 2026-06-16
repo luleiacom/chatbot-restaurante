@@ -1,26 +1,22 @@
 (function () {
-    // RUTA RELATIVA: esto evita errores de conexión en Railway
-    const API_ENDPOINT = "/chat"; 
-
-    // Creamos el contenedor y el Shadow DOM
     const host = document.createElement('div');
     document.body.appendChild(host);
     const shadow = host.attachShadow({ mode: 'open' });
 
     const styles = `
-        :host { all: initial; font-family: sans-serif; }
-        .wrapper { position: fixed; bottom: 28px; right: 28px; z-index: 999999; }
-        #chatbot-toggle { width: 56px; height: 56px; border-radius: 50%; background: #111110; color: white; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        #chatbot-window { display: none; position: fixed; bottom: 100px; right: 28px; width: 350px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
-        #chatbot-window.open { display: flex; }
-        #chatbot-header { background: #111110; color: white; padding: 15px; display: flex; justify-content: space-between; }
-        #chatbot-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fafafa; }
-        .msg { padding: 10px; border-radius: 10px; max-width: 80%; font-size: 14px; }
-        .bot { background: #eee; align-self: flex-start; }
-        .user { background: #111110; color: white; align-self: flex-end; }
-        #chatbot-input-area { padding: 10px; border-top: 1px solid #ddd; display: flex; gap: 5px; }
-        input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        button { cursor: pointer; }
+        :host { all: initial; font-family: 'Segoe UI', sans-serif; }
+        .wrapper { position: fixed; bottom: 20px; right: 20px; z-index: 999999; }
+        #toggle { width: 50px; height: 50px; border-radius: 50%; background: #1a1a1a; color: white; border: none; cursor: pointer; }
+        #window { display: none; position: fixed; bottom: 80px; right: 20px; width: 320px; height: 400px; background: white; border: 1px solid #e5e5e5; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); flex-direction: column; overflow: hidden; }
+        #window.open { display: flex; }
+        header { background: #1a1a1a; color: white; padding: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        #messages { flex: 1; padding: 15px; overflow-y: auto; background: #ffffff; display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 8px 12px; border-radius: 6px; font-size: 13px; max-width: 85%; }
+        .bot { background: #f5f5f5; color: #333; align-self: flex-start; }
+        .user { background: #1a1a1a; color: white; align-self: flex-end; }
+        #input-area { padding: 10px; border-top: 1px solid #e5e5e5; display: flex; gap: 5px; }
+        input { flex: 1; border: 1px solid #e5e5e5; padding: 6px 10px; border-radius: 4px; outline: none; }
+        button#send { background: #1a1a1a; color: white; border: none; padding: 0 12px; border-radius: 4px; cursor: pointer; }
     `;
 
     const styleEl = document.createElement("style");
@@ -30,41 +26,33 @@
     const container = document.createElement("div");
     container.className = "wrapper";
     container.innerHTML = `
-        <button id="chatbot-toggle">💬</button>
-        <div id="chatbot-window">
-            <div id="chatbot-header"><span>Asistente</span><button id="chatbot-close">✕</button></div>
-            <div id="chatbot-messages"></div>
-            <div id="chatbot-input-area">
-                <input id="chatbot-input" placeholder="Escribí aquí...">
-                <button id="chatbot-send">➤</button>
+        <button id="toggle">💬</button>
+        <div id="window">
+            <header>Asistente <button id="close" style="background:none; border:none; color:white; cursor:pointer;">✕</button></header>
+            <div id="messages"></div>
+            <div id="input-area">
+                <input id="input" placeholder="Escribí tu consulta...">
+                <button id="send">Enviar</button>
             </div>
         </div>
     `;
     shadow.appendChild(container);
 
-    // Lógica
-    const win = shadow.getElementById("chatbot-window");
-    const msgs = shadow.getElementById("chatbot-messages");
-    const input = shadow.getElementById("chatbot-input");
+    const win = shadow.getElementById("window");
+    const msgs = shadow.getElementById("messages");
+    const input = shadow.getElementById("input");
 
-    shadow.getElementById("chatbot-toggle").onclick = () => win.classList.toggle("open");
-    shadow.getElementById("chatbot-close").onclick = () => win.classList.remove("open");
-
-    shadow.getElementById("chatbot-send").onclick = async () => {
+    shadow.getElementById("toggle").onclick = () => win.classList.toggle("open");
+    shadow.getElementById("close").onclick = () => win.classList.remove("open");
+    shadow.getElementById("send").onclick = async () => {
         const text = input.value;
         if (!text) return;
         msgs.innerHTML += `<div class="msg user">${text}</div>`;
         input.value = "";
         try {
-            const res = await fetch(API_ENDPOINT, { 
-                method: "POST", 
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({message: text}) 
-            });
+            const res = await fetch("/chat", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({message: text}) });
             const data = await res.json();
             msgs.innerHTML += `<div class="msg bot">${data.response}</div>`;
-        } catch(e) {
-            msgs.innerHTML += `<div class="msg bot">Error al conectar.</div>`;
-        }
+        } catch(e) { msgs.innerHTML += `<div class="msg bot">Error de conexión.</div>`; }
     };
 })();

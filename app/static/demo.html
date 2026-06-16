@@ -7,176 +7,27 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --black: #111110;
-      --white: #fafaf8;
-      --gray: #8a8a85;
-      --light: #f0efeb;
-      --accent: #2d5a3d;
-    }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--white);
-      color: var(--black);
-      min-height: 100vh;
-    }
-
-    /* Header */
-    header {
-      padding: 28px 48px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #e8e8e4;
-    }
-    .logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      letter-spacing: -0.5px;
-    }
+    :root { --black: #111110; --white: #fafaf8; --gray: #8a8a85; --light: #f0efeb; --accent: #2d5a3d; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--black); min-height: 100vh; }
+    header { padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e8e8e4; }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 22px; letter-spacing: -0.5px; }
     .logo span { color: var(--gray); font-style: italic; }
-    nav {
-      font-size: 13px;
-      color: var(--gray);
-      letter-spacing: 0.3px;
-    }
-
-    /* Hero */
-    .hero {
-      max-width: 680px;
-      margin: 96px auto 0;
-      padding: 0 48px;
-    }
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gray);
-      margin-bottom: 28px;
-    }
-    .tag::before {
-      content: '';
-      width: 18px;
-      height: 1px;
-      background: var(--gray);
-      display: inline-block;
-    }
-    h1 {
-      font-family: 'DM Serif Display', serif;
-      font-size: 52px;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
-      margin-bottom: 24px;
-    }
-    h1 em {
-      font-style: italic;
-      color: var(--accent);
-    }
-    .subtitle {
-      font-size: 16px;
-      color: var(--gray);
-      line-height: 1.7;
-      font-weight: 300;
-      max-width: 480px;
-    }
-
-    /* CTA */
-    .cta {
-      margin-top: 40px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--black);
-      color: var(--white);
-      padding: 13px 24px;
-      border-radius: 100px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.2s;
-    }
+    nav { font-size: 13px; color: var(--gray); letter-spacing: 0.3px; }
+    .hero { max-width: 680px; margin: 96px auto 0; padding: 0 48px; }
+    .tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray); margin-bottom: 28px; }
+    .tag::before { content: ''; width: 18px; height: 1px; background: var(--gray); display: inline-block; }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 52px; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 24px; }
+    h1 em { font-style: italic; color: var(--accent); }
+    .subtitle { font-size: 16px; color: var(--gray); line-height: 1.7; font-weight: 300; max-width: 480px; }
+    .cta { margin-top: 40px; display: flex; align-items: center; gap: 20px; }
+    .cta-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--black); color: var(--white); padding: 13px 24px; border-radius: 100px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: opacity 0.2s; }
     .cta-btn:hover { opacity: 0.8; }
-    .cta-hint {
-      font-size: 13px;
-      color: var(--gray);
-    }
-
-    /* Features */
-    .features {
-  max-width: 680px;
-  margin: 96px auto;
-  padding: 0 48px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  overflow: visible;
-}
-    .feature {
-  background: transparent;
-  padding: 0;
-  border: none;
-}
-    .feature-icon {
-     color: var(--accent);
-     margin-bottom: 16px;
-    }
-    .feature h3 {
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 8px;
-      letter-spacing: -0.2px;
-    }
-    .feature p {
-      font-size: 13px;
-      color: var(--gray);
-      line-height: 1.6;
-      font-weight: 300;
-    }
-
-    /* Embed */
-    .embed {
-      max-width: 680px;
-      margin: 0 auto 96px;
-      padding: 0 48px;
-    }
-    .embed-label {
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gray);
-      margin-bottom: 16px;
-    }
-    .embed-box {
-      background: var(--black);
-      border-radius: 12px;
-      padding: 20px 24px;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 13px;
-      color: #a8d5b5;
-      letter-spacing: 0.3px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 32px;
-      font-size: 12px;
-      color: #ccc;
-      border-top: 1px solid #e8e8e4;
-    }
+    .cta-hint { font-size: 13px; color: var(--gray); }
+    .features { max-width: 680px; margin: 96px auto; padding: 0 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .embed { max-width: 680px; margin: 0 auto 96px; padding: 0 48px; }
+    .embed-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray); margin-bottom: 16px; }
+    .embed-box { background: var(--black); border-radius: 12px; padding: 20px 24px; font-family: monospace; font-size: 13px; color: #a8d5b5; overflow-x: auto; }
+    footer { text-align: center; padding: 32px; font-size: 12px; color: #ccc; border-top: 1px solid #e8e8e4; }
   </style>
 </head>
 <body>
@@ -189,54 +40,22 @@
 <section class="hero">
   <div class="tag">Demo en vivo</div>
   <h1>Tu restaurante,<br>atendido por <em>IA</em></h1>
-  <p class="subtitle">Un asistente virtual que responde a tus clientes las 24 horas. Menú, horarios, reservas — sin que tengas que estar presente.</p>
+  <p class="subtitle">Un asistente virtual que responde a tus clientes las 24 horas.</p>
   <div class="cta">
-    <button class="cta-btn" onclick="document.getElementById('chatbot-toggle').click()">
-      💬 Probalo ahora
-    </button>
+    <button class="cta-btn" onclick="document.getElementById('chatbot-toggle').click()">💬 Probalo ahora</button>
     <span class="cta-hint">Sin registro · Gratis</span>
-  </div>
-</section>
-
-<section class="features">
-  <div class="feature">
-    <div class="feature-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-    </div>
-    <h3>IA conversacional</h3>
-    <p>Respuestas naturales y contextuales, no opciones predefinidas.</p>
-  </div>
-  <div class="feature">
-    <div class="feature-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
-    </div>
-    <h3>Memoria de sesión</h3>
-    <p>Recuerda lo que dijiste antes dentro de la misma conversación.</p>
-  </div>
-  <div class="feature">
-    <div class="feature-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-    </div>
-    <h3>Panel de conversaciones</h3>
-    <p>El dueño puede ver todas las consultas recibidas en tiempo real.</p>
-  </div>
-  <div class="feature">
-    <div class="feature-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 13 9 20 9"/><path d="M20 14v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7l7 7z"/></svg>
-    </div>
-    <h3>Una línea de código</h3>
-    <p>Se integra en cualquier sitio web con un simple script tag.</p>
   </div>
 </section>
 
 <section class="embed">
   <p class="embed-label">Integración</p>
   <div class="embed-box">
-  <script src="https://glistening-reprieve-production.up.railway.app/static/widget.js"></script>
+    &lt;script src="https://glistening-reprieve-production.up.railway.app/static/widget.js"&gt;&lt;/script&gt;
+  </div>
 </section>
 
 <footer>Hecho con FastAPI · NODO Automatización e IA</footer>
 
-<script src="/static/widget.js"></script>
+<script src="https://glistening-reprieve-production.up.railway.app/static/widget.js"></script>
 </body>
 </html>

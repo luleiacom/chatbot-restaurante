@@ -1,5 +1,5 @@
 (function () {
-  // Al dejar la URL vacía, el navegador usará el mismo dominio donde está la web
+  // Al dejar esto vacío, el chat se conecta automáticamente a la URL donde está alojada tu web
   const CHATBOT_URL = ""; 
   let sessionId = null;
   let isOpen = false;
@@ -51,6 +51,7 @@
     quickRepliesContainer.innerHTML = "";
     addMessage(text, "user");
     try {
+      // Usamos ruta relativa /chat
       const res = await fetch(`${CHATBOT_URL}/chat`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ session_id: sessionId, message: text }) });
       const data = await res.json(); sessionId = data.session_id; addMessage(data.response, "bot");
     } catch (e) { addMessage("Error al conectar con el servidor.", "bot"); }
